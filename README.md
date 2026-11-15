@@ -1,1 +1,1 @@
-# scanner ny Trade Expert
+# scanner by Trade Expert
