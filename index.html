@@ -212,6 +212,26 @@ function go(t){st.tab=t;render();scrollTo(0,0)}
 function setA(k){st.a=k;load()}
 function setTF(v){st.tf=v;load()}
 async function load(q){if(!q){st.busy=true;render()}const key=st.a,tf=st.tf,g=await getK(key,tf);if(key!==st.a||tf!==st.tf)return;st.r=analyze(g.k);st.r.demo=g.demo;st.busy=false;render()}
+  if(best && best.cur.wr > 0.5 && window.lastMsg !== best.n + best.act.e) {
+    const apiKey = "e3Uc6oeHIwSHxINW8liYU4ktBqCSgk33R8MbeiXjBoC64I2kyRo8kXrztOKmEpb7gu1bq6vSx16br4My";
+    const phone = "8697080722"; 
+    const msg = encodeURIComponent(`Trade Alert | Strategy: ${best.n} | Entry: ${best.act.e.toFixed(2)} | WinRate: ${Math.round(best.cur.wr*100)}%`);
+    
+    fetch('https://www.fast2sms.com/dev/bulkV2', {
+        method: 'POST',
+        headers: {
+            'authorization': apiKey,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            route: 'q',
+            message: msg,
+            flash: 0,
+            numbers: phone
+        })
+    }).then(() => window.lastMsg = best.n + best.act.e);
+  }
+  
 addEventListener('resize',()=>{if(st.tab==='live'&&st.r&&!st.busy)drawChart()});
 setInterval(()=>{if(!st.busy&&st.tab==='live'&&!document.hidden)load(true)},60000);
 load();
