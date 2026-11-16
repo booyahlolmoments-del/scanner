@@ -1,0 +1,1 @@
+{"name":"setup-scanner","version":"3.0.0","private":true,"engines":{"node":">=20.6"},"scripts":{"start":"node --env-file=.env server.js"},"dependencies":{"express":"^4.21.2","express-rate-limit":"^7.5.0","helmet":"^8.0.0"}}
