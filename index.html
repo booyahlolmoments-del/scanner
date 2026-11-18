@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PACTS Crypto App V1</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b1220;color:#e8eefc;font-family:system-ui,Arial}
+header{padding:22px 16px;background:#111c30;border-bottom:1px solid #263650}
+main{max-width:1000px;margin:auto;padding:16px}h1{margin:0 0 6px;font-size:24px}
+.sub,.muted{color:#9fb0ca;font-size:13px}.bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:16px 0}
+button{background:#2875e8;color:white;border:0;border-radius:9px;padding:11px 16px;font-weight:700}
+#status{color:#a9bad4;font-size:13px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.card{background:#121e32;border:1px solid #293b58;border-radius:13px;padding:15px}
+.coin{font-size:18px;font-weight:750}.signal{font-weight:800;margin:10px 0}.BUY{color:#35d49a}.SELL{color:#ff7777}.WAIT{color:#f4c66b}
+.metric{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #263650;font-size:13px}
+.note{margin-top:18px;padding:14px;border:1px solid #65552b;background:#2a2415;border-radius:10px;color:#f4dfaa;font-size:13px}
+</style></head>
+<body>
+<header><h1>PACTS Crypto App V1</h1><div class="sub">Binance USDT Perpetual · BTC / ETH / LINK / SOL · Paper research dashboard</div></header>
+<main><div class="bar"><button onclick="loadData()">Refresh signals</button><span id="status">ডেটা লোড হচ্ছে…</span></div>
+<div id="cards" class="grid"></div>
+<div class="note"><b>সতর্কতা:</b> এটি প্রাথমিক গবেষণা-সংস্করণ। সিগন্যাল নিশ্চিত লাভের নিশ্চয়তা নয়। কোনো অর্ডার দেয় না, API key লাগে না, এবং বাস্তব ট্রেডিংয়ের আগে ব্যাকটেস্ট ও paper trading দিয়ে যাচাই করতে হবে।</div>
+</main>
+<script>
+const fmt=x=>x==null?"—":Number(x).toLocaleString("en-US",{maximumFractionDigits:6});
+async function loadData(){
+ const status=document.getElementById("status");status.textContent="Binance থেকে ডেটা আনা হচ্ছে…";
+ try{
+  const r=await fetch("/api/scan");const d=await r.json();
+  document.getElementById("cards").innerHTML=d.signals.map(s=>`
+  <section class="card"><div class="coin">${s.symbol}</div>
+  <div class="signal ${s.signal}">${s.signal}</div>
+  <div class="metric"><span>বর্তমান দাম</span><b>${fmt(s.price)}</b></div>
+  <div class="metric"><span>Entry</span><b>${fmt(s.entry)}</b></div>
+  <div class="metric"><span>Stop Loss</span><b>${fmt(s.stop_loss)}</b></div>
+  ${[0,1,2].map(i=>`<div class="metric"><span>TP${i+1}</span><b>${fmt(s.targets[i])}</b></div>`).join("")}
+  <div class="metric"><span>RSI (15m)</span><b>${fmt(s.rsi_15m)}</b></div>
+  <p class="muted">${s.reasons.join(" · ")}</p></section>`).join("");
+  status.textContent=`আপডেট: ${new Date().toLocaleTimeString()} · ${d.errors.length}টি ডেটা সমস্যা`;
+ }catch(e){status.textContent="ডেটা লোড হয়নি: "+e.message}
+}
+loadData();setInterval(loadData,60000);
+</script></body></html>
